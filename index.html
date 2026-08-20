@@ -82,10 +82,22 @@ textarea{min-height:92px;resize:vertical}
 .answer-btn.wrong{background:var(--danger);border-color:#fecaca}
 .answer-explain{margin-top:12px;padding:12px;border-radius:14px;background:#f8fafc;line-height:1.7;font-size:14px}
 .scorebig{font-size:38px;font-weight:800;letter-spacing:-1px}
+
+.history-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
+.history-row:first-child{border-top:0}
+.history-row small{color:var(--muted);display:block;margin-top:3px}
+.score-chip{min-width:66px;text-align:center;font-weight:800;border-radius:999px;padding:7px 9px;background:var(--accent2);color:var(--accent)}
+.weak-row{margin:12px 0}
+.weak-head{display:flex;justify-content:space-between;gap:12px;font-size:13px;margin-bottom:5px}
+.weak-head b{font-size:14px}
+.weak-note{font-size:12px;color:var(--muted);line-height:1.6}
+.mini-progress{height:8px;background:#edf0f5;border-radius:999px;overflow:hidden}
+.mini-progress span{display:block;height:100%;background:var(--accent);border-radius:999px}
+.template-box{background:#f8fafc;border:1px dashed #cfd6e3;border-radius:14px;padding:12px;margin-top:10px;font-size:13px;line-height:1.65}
 </style>
 </head>
 <body>
-<header><div class="head"><div class="brand"><b>強度行動障害 支援ナビ</b><span>学習・記録・支援手順書　<span class="tag">学習テスト版</span></span></div><button class="pill" onclick="showInstall()">＋ ホーム画面</button></div></header>
+<header><div class="head"><div class="brand"><b>強度行動障害 支援ナビ</b><span>学習・記録・支援手順書　<span class="tag">履歴・苦手分析版</span></span></div><button class="pill" onclick="showInstall()">＋ ホーム画面</button></div></header>
 
 <main>
 <section id="home" class="page active">
@@ -97,6 +109,7 @@ textarea{min-height:92px;resize:vertical}
   <button class="tile" onclick="show('abc')"><span class="ico">📝</span><b>ABC記録</b><span>前・行動・後を具体的に記録</span></button>
   <button class="tile" onclick="show('check')"><span class="ico">✅</span><b>支援チェック</b><span>分かりやすさ・見通し・伝え方を確認</span></button>
   <button class="tile" onclick="show('course')"><span class="ico">🎓</span><b>学習コース</b><span>学ぶ → テスト → 間違い復習 → 手順書</span></button>
+  <button class="tile" onclick="show('learningStats')"><span class="ico">📈</span><b>学習履歴・苦手分析</b><span>テスト履歴と苦手分野を自動集計</span></button>
 <button class="tile" onclick="show('learn')"><span class="ico">📘</span><b>基礎学習</b><span>構造化・コミュニケーション・記録と評価</span></button>
  </div>
  <div class="card notice"><h3>大切な注意</h3><p>このアプリは学習・支援補助用です。自傷・他害など切迫した危険がある場面では、まず本人と周囲の安全を確保し、所属先の緊急手順・管理者・医療専門職等の判断を優先してください。</p></div>
@@ -120,6 +133,8 @@ textarea{min-height:92px;resize:vertical}
  <div class="section-title"><h2>支援手順書</h2><small>利用者ごとに作成</small></div>
  <div class="card no-print">
   <label>利用者を選択<select id="procProfile" onchange="loadProcedure()"></select></label>
+  <button class="secondary" onclick="autoFillProcedure()">✨ 利用者情報からテンプレート自動入力</button>
+  <div class="template-box">利用者に登録した「伝わりやすい方法・苦手な刺激・初期サイン・有効だった支援・避けたい対応」をもとに、手順書の下書きを自動作成します。保存済みの内容がある場合は上書き確認をします。</div>
   <label>支援する場面<input id="procScene" placeholder="例：作業終了から送迎車に乗るまで"></label>
   <label>本人に伝える内容<textarea id="procTell" placeholder="例：『作業おわり → トイレ → 玄関 → 車』を写真で提示"></textarea></label>
   <label>環境の設定<textarea id="procEnv" placeholder="例：待機場所を固定し、人の出入りが少ない位置にする"></textarea></label>
@@ -166,6 +181,14 @@ textarea{min-height:92px;resize:vertical}
  <div class="card"><span class="tag">STEP 3</span><h3>🔁 間違えた部分を復習する</h3><p>前回テストで間違えた問題だけをまとめて復習できます。</p><button class="secondary" onclick="openWrongReview()">間違い復習を見る</button></div>
  <div class="card"><span class="tag">STEP 4</span><h3>📋 現場の支援手順書を見る</h3><p>学んだ内容を、利用者ごとの具体的な支援手順に落とし込みます。</p><button class="secondary" onclick="show('procedure')">支援手順書へ</button></div>
  <div class="card good"><h3>学習状況</h3><div id="courseProgress">まだテスト履歴はありません。</div></div>
+</section>
+
+<section id="learningStats" class="page">
+ <button class="back" onclick="show('home')">← 戻る</button>
+ <div class="section-title"><h2>📈 学習履歴・苦手分析</h2><small>端末内に自動保存</small></div>
+ <div class="card good"><h3>現在の学習状況</h3><div id="statsSummary">まだテスト履歴はありません。</div></div>
+ <div class="card"><h3>苦手分野</h3><p class="weak-note">これまでの回答から、正答率の低い分野を自動集計します。受験回数が増えるほど傾向が分かりやすくなります。</p><div id="weakTopics"></div></div>
+ <div class="card"><h3>テスト履歴</h3><div id="testHistoryList"></div><button class="secondary" onclick="clearLearningHistory()">履歴をリセット</button></div>
 </section>
 
 <section id="courseLearn" class="page">
@@ -252,6 +275,7 @@ function show(id){
  if(id==='profiles') renderProfiles();
  if(id==='procedure'){fillProfileSelects();loadProcedure()}
  if(id==='abc'){fillProfileSelects();renderABC()}
+ if(id==='learningStats') renderLearningStats();
 }
 function isStandalone(){
  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
@@ -338,6 +362,29 @@ function loadProcedure(){
  procScene.value=p.scene||'';procTell.value=p.tell||'';procEnv.value=p.env||'';procSteps.value=p.steps||'';procSigns.value=p.signs||'';procCrisis.value=p.crisis||'';procAvoid.value=p.avoid||'';procRecord.value=p.record||'';
  renderProcedurePreview();
 }
+
+function autoFillProcedure(){
+ if(procProfile.value===""){alert('利用者を選択してください');return}
+ const prof=getProfiles()[Number(procProfile.value)]||{};
+ const hasExisting=[procScene.value,procTell.value,procEnv.value,procSteps.value,procSigns.value,procCrisis.value,procAvoid.value,procRecord.value].some(v=>v.trim());
+ if(hasExisting && !confirm('現在入力されている内容を、利用者情報をもとにしたテンプレートで上書きしますか？'))return;
+ const comm=prof.comm||'本人に分かりやすい写真・文字・実物などを用いて、短く具体的に伝える';
+ const hard=prof.hard||'苦手な刺激・状況を事前に確認する';
+ const like=prof.like||'本人が落ち着きやすい活動・場所・方法を活用する';
+ const signs=prof.signs||'表情・動き・声・耳を塞ぐ等、普段と違う小さな変化を確認する';
+ const support=prof.support||'見通しを示し、必要な支援を短く具体的に行う';
+ const avoid=prof.avoid||'複数人で一斉に声をかける、急かす、長く説得する';
+ procScene.value='日課・活動の切り替え、待ち時間、予定変更など、本人が不安や混乱を感じやすい場面';
+ procTell.value=`${comm}。\n「何をするか・どのくらい・いつ終わるか・終わったら次は何か」を本人に分かる形で示す。`;
+ procEnv.value=`${hard}。\n刺激を減らせる場所や休憩場所を確保し、必要に応じて「${like}」を活用する。`;
+ procSteps.value=`1. 活動前に予定と終わりを分かりやすく示す。\n2. 本人の理解を確認し、声かけは短く具体的にする。\n3. 不安の初期サインがあれば刺激や要求量を調整する。\n4. ${support}。\n5. 終了後は次の予定を示し、落ち着いてから記録する。`;
+ procSigns.value=signs;
+ procCrisis.value=`まず安全を確認し、人・音・物などの刺激を減らす。声かけを必要最小限にし、${like}。落ち着く前に説明や説得を増やさない。`;
+ procAvoid.value=avoid;
+ procRecord.value='場面・開始時刻・直前の状況・初期サイン・本人の行動・支援者の対応・落ち着くまでの時間・有効だった支援を具体的に記録する。';
+ renderProcedurePreview();
+}
+
 function saveProcedure(){
  if(procProfile.value===""){alert('利用者を選択してください');return}
  const p={scene:procScene.value,tell:procTell.value,env:procEnv.value,steps:procSteps.value,signs:procSigns.value,crisis:procCrisis.value,avoid:procAvoid.value,record:procRecord.value,updated:new Date().toISOString()};
@@ -436,9 +483,78 @@ function startTest(){currentTest=shuffle(quizBank).slice(0,10);testIndex=0;testS
 function renderTestQuestion(){const q=currentTest[testIndex],topic=learningTopics.find(t=>t.id===q.topic);testCounter.textContent=`${testIndex+1} / ${currentTest.length}`;testBox.innerHTML=`<span class="tag">${topic?topic.icon:"📝"} ${topic?topic.title:"テスト"}</span><div class="progressbar"><span style="width:${(testIndex/currentTest.length)*100}%"></span></div><h3>${q.q}</h3><div id="answers">${q.opts.map((o,i)=>`<button class="answer-btn" onclick="answerTest(${i},this)">${o}</button>`).join('')}</div><div id="testExplain"></div>`}
 function answerTest(choice,btn){if(testLocked)return;testLocked=true;const q=currentTest[testIndex],ok=choice===q.correct;if(ok)testScore++;testAnswers.push({q,choice,ok});document.querySelectorAll('.answer-btn').forEach((b,i)=>{b.disabled=true;if(i===q.correct)b.classList.add('correct');else if(i===choice&&!ok)b.classList.add('wrong')});testExplain.innerHTML=`<div class="answer-explain"><b>${ok?"✅ 正解":"❌ 不正解"}</b><br>${q.ex}</div><button class="primary" onclick="nextTestQuestion()">${testIndex===currentTest.length-1?"結果を見る":"次の問題"}</button>`}
 function nextTestQuestion(){testIndex++;testLocked=false;if(testIndex>=currentTest.length){finishTest();return}renderTestQuestion()}
-function finishTest(){const wrong=testAnswers.filter(x=>!x.ok),hist=JSON.parse(localStorage.getItem('learning_history')||'[]');hist.unshift({date:new Date().toISOString(),score:testScore,total:currentTest.length,wrong:wrong.map(x=>x.q)});localStorage.setItem('learning_history',JSON.stringify(hist.slice(0,20)));localStorage.setItem('last_wrong_questions',JSON.stringify(wrong.map(x=>x.q)));show('testResult');const pct=Math.round(testScore/currentTest.length*100);testResultBox.innerHTML=`<div class="scorebig">${testScore} / ${currentTest.length}</div><p>正答率 ${pct}%</p><div class="progressbar"><span style="width:${pct}%"></span></div><p>${wrong.length===0?"全問正解です。":"間違えた問題は "+wrong.length+" 問です。すぐに復習できます。"}</p>${wrong.length?'<button class="primary" onclick="openWrongReview()">間違えた問題を復習</button>':''}<button class="secondary" onclick="show('procedure')">現場の支援手順書を見る</button><button class="secondary" onclick="startTest()">もう一度テストする</button>`;updateCourseProgress()}
+function finishTest(){
+ const wrong=testAnswers.filter(x=>!x.ok),hist=JSON.parse(localStorage.getItem('learning_history')||'[]');
+ const answers=testAnswers.map(x=>({topic:x.q.topic,q:x.q.q,ok:x.ok,choice:x.choice,correct:x.q.correct}));
+ hist.unshift({date:new Date().toISOString(),score:testScore,total:currentTest.length,wrong:wrong.map(x=>x.q),answers});
+ localStorage.setItem('learning_history',JSON.stringify(hist.slice(0,100)));
+ localStorage.setItem('last_wrong_questions',JSON.stringify(wrong.map(x=>x.q)));
+ show('testResult');
+ const pct=Math.round(testScore/currentTest.length*100);
+ testResultBox.innerHTML=`<div class="scorebig">${testScore} / ${currentTest.length}</div><p>正答率 ${pct}%</p><div class="progressbar"><span style="width:${pct}%"></span></div><p>${wrong.length===0?"全問正解です。":"間違えた問題は "+wrong.length+" 問です。すぐに復習できます。"}</p>${wrong.length?'<button class="primary" onclick="openWrongReview()">間違えた問題を復習</button>':''}<button class="secondary" onclick="show('learningStats')">📈 履歴・苦手分野を見る</button><button class="secondary" onclick="show('procedure')">現場の支援手順書を見る</button><button class="secondary" onclick="startTest()">もう一度テストする</button>`;
+ updateCourseProgress();
+}
 function openWrongReview(){const wrong=JSON.parse(localStorage.getItem('last_wrong_questions')||'[]');show('wrongReview');if(!wrong.length){wrongReviewList.innerHTML='<div class="card empty">前回の間違いはありません。テストを受けると、ここに復習内容が表示されます。</div>';return}wrongReviewList.innerHTML=wrong.map((q,i)=>{const topic=learningTopics.find(t=>t.id===q.topic);return `<div class="card"><span class="tag">${topic?topic.icon:"🔁"} ${topic?topic.title:"復習"}</span><h3>${i+1}. ${q.q}</h3><p><b>正解：</b>${q.opts[q.correct]}</p><div class="answer-explain">${q.ex}</div></div>`}).join('')+`<div class="card good"><h3>復習できたら</h3><button class="primary" onclick="startTest()">もう一度テストする</button><button class="secondary" onclick="show('procedure')">支援手順書を見る</button></div>`}
-function updateCourseProgress(){const hist=JSON.parse(localStorage.getItem('learning_history')||'[]');if(!hist.length){courseProgress.innerHTML='まだテスト履歴はありません。';return}const last=hist[0],best=Math.max(...hist.map(h=>Math.round(h.score/h.total*100))),lp=Math.round(last.score/last.total*100);courseProgress.innerHTML=`<div><b>前回：</b>${last.score}/${last.total}（${lp}%）</div><div><b>最高：</b>${best}%</div><div><b>受験回数：</b>${hist.length}回</div>`}
+function getLearningHistory(){return JSON.parse(localStorage.getItem('learning_history')||'[]')}
+
+function topicStatsFromHistory(){
+ const hist=getLearningHistory(),stats={};
+ learningTopics.forEach(t=>stats[t.id]={topic:t,total:0,correct:0,wrong:0});
+ hist.forEach(h=>{
+   if(Array.isArray(h.answers) && h.answers.length){
+     h.answers.forEach(a=>{
+       if(!stats[a.topic])return;
+       stats[a.topic].total++;
+       if(a.ok)stats[a.topic].correct++;else stats[a.topic].wrong++;
+     });
+   }else if(Array.isArray(h.wrong)){
+     // Older saved history: wrong answers can still contribute to weak-topic detection.
+     h.wrong.forEach(q=>{
+       if(!q || !stats[q.topic])return;
+       stats[q.topic].total++;
+       stats[q.topic].wrong++;
+     });
+   }
+ });
+ return Object.values(stats).filter(s=>s.total>0).map(s=>({...s,pct:Math.round(s.correct/s.total*100)}));
+}
+
+function updateCourseProgress(){
+ const hist=getLearningHistory();
+ if(!hist.length){courseProgress.innerHTML='まだテスト履歴はありません。';return}
+ const last=hist[0],best=Math.max(...hist.map(h=>Math.round(h.score/h.total*100))),lp=Math.round(last.score/last.total*100);
+ const weak=topicStatsFromHistory().sort((a,b)=>a.pct-b.pct || b.total-a.total)[0];
+ courseProgress.innerHTML=`<div><b>前回：</b>${last.score}/${last.total}（${lp}%）</div><div><b>最高：</b>${best}%</div><div><b>受験回数：</b>${hist.length}回</div>${weak?`<div><b>現在の苦手：</b>${weak.topic.icon} ${weak.topic.title}（正答率 ${weak.pct}%）</div>`:''}<button class="secondary" onclick="show('learningStats')">詳しい履歴・苦手分析を見る</button>`;
+}
+
+function renderLearningStats(){
+ const hist=getLearningHistory();
+ if(!hist.length){
+   statsSummary.innerHTML='まだテスト履歴はありません。テストを受けると自動で保存されます。';
+   weakTopics.innerHTML='<div class="empty">集計できるデータがありません。</div>';
+   testHistoryList.innerHTML='<div class="empty">履歴はありません。</div>';
+   return;
+ }
+ const pcts=hist.map(h=>Math.round(h.score/h.total*100));
+ const latest=pcts[0],best=Math.max(...pcts),avg=Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length);
+ statsSummary.innerHTML=`<div><b>受験回数：</b>${hist.length}回</div><div><b>前回：</b>${latest}%</div><div><b>最高：</b>${best}%</div><div><b>平均：</b>${avg}%</div>`;
+ const stats=topicStatsFromHistory().sort((a,b)=>a.pct-b.pct || b.total-a.total);
+ weakTopics.innerHTML=stats.length?stats.map((s,i)=>`<div class="weak-row"><div class="weak-head"><b>${i<3?'⚠️ ':''}${s.topic.icon} ${s.topic.title}</b><span>${s.correct}/${s.total} 正解・${s.pct}%</span></div><div class="mini-progress"><span style="width:${s.pct}%"></span></div></div>`).join(''):'<div class="empty">まだ分野別集計がありません。</div>';
+ testHistoryList.innerHTML=hist.map((h,i)=>{
+   const pct=Math.round(h.score/h.total*100),d=new Date(h.date);
+   const date=isNaN(d)?'日時不明':d.toLocaleString('ja-JP',{year:'numeric',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
+   const wrongCount=Array.isArray(h.wrong)?h.wrong.length:Math.max(0,h.total-h.score);
+   return `<div class="history-row"><div><b>${date}</b><small>${h.score}/${h.total}点 ・ 間違い ${wrongCount}問</small></div><div class="score-chip">${pct}%</div></div>`;
+ }).join('');
+}
+
+function clearLearningHistory(){
+ if(!confirm('テスト履歴・苦手分野の集計・前回の間違いをすべてリセットしますか？'))return;
+ localStorage.removeItem('learning_history');
+ localStorage.removeItem('last_wrong_questions');
+ updateCourseProgress();
+ renderLearningStats();
+}
 
 renderScenarios();renderProfiles();fillProfileSelects();updateCourseProgress();
 abcDate.value=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16);
