@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f8fb">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="支援ナビ">
+
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" href="icon-192.png" sizes="192x192">
+
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>強度行動障害 支援ナビ</title>
+<style>
+:root{
+ --bg:#f7f8fb;--card:#fff;--text:#172033;--muted:#687386;--line:#e7eaf0;
+ --accent:#315efb;--accent2:#eef3ff;--good:#eaf9ef;--warn:#fff6e6;--danger:#fff0f0;
+ --shadow:0 10px 30px rgba(24,39,75,.06);--radius:20px;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic UI","Yu Gothic",sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font:inherit}
+header{position:sticky;top:0;z-index:20;background:rgba(247,248,251,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding:calc(10px + env(safe-area-inset-top)) 16px 10px;border-bottom:1px solid rgba(231,234,240,.8)}
+.head{max-width:840px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand b{display:block;font-size:18px}.brand span{font-size:11px;color:var(--muted)}
+.pill{border:0;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 11px;color:var(--text)}
+main{max-width:840px;margin:auto;padding:16px 14px 106px}
+.page{display:none}.page.active{display:block}
+.hero{background:linear-gradient(145deg,#315efb 0%,#6b8cff 100%);color:#fff;border-radius:26px;padding:22px;box-shadow:0 14px 35px rgba(49,94,251,.20);margin-bottom:14px}
+.hero .eyebrow{font-size:12px;opacity:.82}.hero h1{font-size:27px;line-height:1.3;margin:8px 0}.hero p{font-size:14px;line-height:1.7;margin:0;opacity:.94}
+.quick{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0}
+.tile{border:1px solid var(--line);background:#fff;border-radius:21px;padding:16px;text-align:left;min-height:112px;box-shadow:var(--shadow)}
+.tile .ico{font-size:26px}.tile b{display:block;font-size:16px;margin:8px 0 5px}.tile span{display:block;font-size:12px;color:var(--muted);line-height:1.5}
+.section-title{display:flex;justify-content:space-between;align-items:end;margin:20px 2px 10px}.section-title h2{font-size:18px;margin:0}.section-title small{color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin:10px 0;box-shadow:0 3px 12px rgba(20,32,60,.035)}
+.card h3{font-size:17px;margin:0 0 10px}.card p,.card li{font-size:14px;line-height:1.72}.card ul{padding-left:20px;margin:8px 0}
+.back{border:0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:9px 12px;margin-bottom:10px}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:5px 9px;border-radius:999px;background:var(--accent2);color:#315efb;margin-bottom:8px}
+.notice{background:var(--warn);border-left:4px solid #f59e0b}.danger{background:var(--danger);border-left:4px solid #ef4444}.good{background:var(--good);border-left:4px solid #16a34a}
+label{font-size:12px;font-weight:700;display:block;margin-top:12px}
+input,textarea,select{width:100%;margin-top:6px;border:1px solid #d8dde7;border-radius:14px;padding:12px;background:#fff;color:var(--text)}
+textarea{min-height:92px;resize:vertical}
+.primary,.secondary,.dangerbtn{width:100%;border-radius:14px;padding:12px;font-weight:700;margin-top:10px}
+.primary{border:0;background:var(--accent);color:#fff}.secondary{border:1px solid var(--line);background:#fff}.dangerbtn{border:1px solid #fecaca;background:#fff;color:#b91c1c}
+.segment{display:flex;gap:7px;overflow:auto;padding-bottom:4px}.segment button{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 11px;font-size:12px}.segment button.active{background:var(--text);color:#fff}
+.scenario{cursor:pointer}.scenario h3{display:flex;justify-content:space-between;align-items:center}.scenario .arrow{color:var(--muted)}
+.step{display:grid;grid-template-columns:31px 1fr;gap:10px;margin:12px 0}.num{width:31px;height:31px;border-radius:50%;background:var(--accent2);color:var(--accent);display:grid;place-items:center;font-weight:800;font-size:13px}.step b{font-size:14px}.step p{margin:3px 0 0}
+.profile-card{display:flex;gap:12px;align-items:center}.avatar{width:46px;height:46px;border-radius:15px;background:var(--accent2);display:grid;place-items:center;font-size:21px}.profile-card .grow{flex:1}.profile-card small{color:var(--muted)}
+.check{display:flex;gap:10px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)}.check:first-child{border-top:0}.check input{width:auto;margin-top:3px}
+.record{padding:12px 0;border-top:1px solid var(--line)}.record:first-child{border-top:0}.record small{color:var(--muted)}
+.empty{text-align:center;color:var(--muted);padding:25px 10px;font-size:13px}
+.bottom{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.93);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:7px 8px calc(7px + env(safe-area-inset-bottom))}
+.bottom nav{max-width:840px;margin:auto;display:grid;grid-template-columns:repeat(5,1fr)}
+.bottom button{border:0;background:transparent;color:var(--muted);font-size:10px;padding:5px}.bottom button b{display:block;font-size:20px;margin-bottom:2px}.bottom button.active{color:var(--accent)}
+.sheet{position:fixed;inset:0;background:rgba(20,28,45,.32);z-index:50;display:none;align-items:flex-end}.sheet.show{display:flex}.sheet-inner{width:100%;max-height:88vh;overflow:auto;background:#fff;border-radius:26px 26px 0 0;padding:10px 16px calc(20px + env(safe-area-inset-bottom));box-shadow:0 -12px 40px rgba(0,0,0,.12)}.grab{width:42px;height:5px;background:#d7dbe4;border-radius:99px;margin:2px auto 12px}
+.kv{display:grid;grid-template-columns:110px 1fr;gap:8px;font-size:13px;padding:8px 0;border-top:1px solid var(--line)}.kv:first-child{border-top:0}.kv b{color:var(--muted)}
+.procedure-preview{white-space:pre-wrap;font-size:13px;line-height:1.7;background:#fafbfc;border:1px solid var(--line);border-radius:14px;padding:13px}
+@media(min-width:720px){.quick{grid-template-columns:repeat(3,1fr)}}
+@media print{header,.bottom,.back,.no-print{display:none!important}main{padding:0}.page{display:none!important}#procedure{display:block!important}.card{box-shadow:none;border:0}.print-only{display:block}}
+
+.install-guide{position:fixed;inset:0;z-index:100;background:rgba(15,23,42,.46);display:none;align-items:flex-end}
+.install-guide.show{display:flex}
+.install-card{width:100%;max-width:840px;margin:0 auto;background:#fff;border-radius:28px 28px 0 0;padding:10px 18px calc(22px + env(safe-area-inset-bottom));box-shadow:0 -15px 50px rgba(0,0,0,.18)}
+.install-card h2{margin:8px 0 8px;font-size:22px}
+.install-card p,.install-card li{font-size:14px;line-height:1.7}
+.install-steps{counter-reset:step;padding:0;list-style:none}
+.install-steps li{position:relative;padding:10px 0 10px 42px;border-top:1px solid var(--line)}
+.install-steps li:first-child{border-top:0}
+.install-steps li:before{counter-increment:step;content:counter(step);position:absolute;left:0;top:9px;width:28px;height:28px;border-radius:50%;background:var(--accent2);color:var(--accent);display:grid;place-items:center;font-weight:800}
+.install-status{font-size:12px;padding:8px 10px;border-radius:12px;background:#f3f4f6;color:var(--muted);margin:10px 0}
+
+</style>
+</head>
+<body>
+<header><div class="head"><div class="brand"><b>強度行動障害 支援ナビ</b><span>学習・記録・支援手順書</span></div><button class="pill" onclick="showInstall()">＋ ホーム画面</button></div></header>
+
+<main>
+<section id="home" class="page active">
+ <div class="hero"><div class="eyebrow">支援の基本</div><h1>行動の背景を見て、<br>分かりやすい支援へ。</h1><p>障害特性・環境・コミュニケーション・見通しを整理し、本人に合った支援方法をチームで共有するためのツールです。</p></div>
+ <div class="quick">
+  <button class="tile" onclick="show('situations')"><span class="ico">🧭</span><b>場面別対応</b><span>こだわり・感覚過敏・パニック・自傷・他害など</span></button>
+  <button class="tile" onclick="show('profiles')"><span class="ico">👤</span><b>利用者</b><span>特性と有効な支援を利用者ごとに整理</span></button>
+  <button class="tile" onclick="show('procedure')"><span class="ico">📋</span><b>支援手順書</b><span>本人別の手順書を作成・保存・印刷</span></button>
+  <button class="tile" onclick="show('abc')"><span class="ico">📝</span><b>ABC記録</b><span>前・行動・後を具体的に記録</span></button>
+  <button class="tile" onclick="show('check')"><span class="ico">✅</span><b>支援チェック</b><span>分かりやすさ・見通し・伝え方を確認</span></button>
+  <button class="tile" onclick="show('learn')"><span class="ico">📘</span><b>基礎学習</b><span>構造化・コミュニケーション・記録と評価</span></button>
+ </div>
+ <div class="card notice"><h3>大切な注意</h3><p>このアプリは学習・支援補助用です。自傷・他害など切迫した危険がある場面では、まず本人と周囲の安全を確保し、所属先の緊急手順・管理者・医療専門職等の判断を優先してください。</p></div>
+</section>
+
+<section id="situations" class="page">
+ <button class="back" onclick="show('home')">← 戻る</button>
+ <div class="section-title"><h2>場面別対応</h2><small>背景から考える</small></div>
+ <div class="segment" id="scenarioFilters"></div>
+ <div id="scenarioList"></div>
+</section>
+
+<section id="profiles" class="page">
+ <button class="back" onclick="show('home')">← 戻る</button>
+ <div class="section-title"><h2>利用者</h2><button class="pill" onclick="openProfile()">＋ 追加</button></div>
+ <div id="profileList"></div>
+</section>
+
+<section id="procedure" class="page">
+ <button class="back no-print" onclick="show('home')">← 戻る</button>
+ <div class="section-title"><h2>支援手順書</h2><small>利用者ごとに作成</small></div>
+ <div class="card no-print">
+  <label>利用者を選択<select id="procProfile" onchange="loadProcedure()"></select></label>
+  <label>支援する場面<input id="procScene" placeholder="例：作業終了から送迎車に乗るまで"></label>
+  <label>本人に伝える内容<textarea id="procTell" placeholder="例：『作業おわり → トイレ → 玄関 → 車』を写真で提示"></textarea></label>
+  <label>環境の設定<textarea id="procEnv" placeholder="例：待機場所を固定し、人の出入りが少ない位置にする"></textarea></label>
+  <label>具体的な支援手順<textarea id="procSteps" placeholder="1. 終了カードを提示&#10;2. 完成ボックスへ入れる&#10;3. 次の写真カードを指さす…"></textarea></label>
+  <label>不安・混乱のサイン<textarea id="procSigns" placeholder="例：歩く速度が上がる、耳を塞ぐ、同じ言葉を繰り返す"></textarea></label>
+  <label>混乱が強まった時の対応<textarea id="procCrisis" placeholder="例：言葉を増やさず、安全な距離をとり、静かな場所へ移動できるよう提示"></textarea></label>
+  <label>避ける対応<textarea id="procAvoid" placeholder="例：複数職員が一斉に声をかける、急かす"></textarea></label>
+  <label>記録するポイント<textarea id="procRecord" placeholder="例：開始時刻、待ち時間、サイン、提示した支援、結果"></textarea></label>
+  <button class="primary" onclick="saveProcedure()">手順書を保存</button>
+  <button class="secondary" onclick="renderProcedurePreview()">プレビュー更新</button>
+  <button class="secondary" onclick="window.print()">印刷 / PDF保存</button>
+ </div>
+ <div class="card"><h3>支援手順書プレビュー</h3><div id="procedurePreview" class="procedure-preview">利用者を選択して手順書を作成してください。</div></div>
+</section>
+
+<section id="abc" class="page">
+ <button class="back" onclick="show('home')">← 戻る</button>
+ <div class="section-title"><h2>ABC記録</h2><small>具体的に記録</small></div>
+ <div class="card">
+  <label>利用者<select id="abcProfile"></select></label>
+  <label>日時<input id="abcDate" type="datetime-local"></label>
+  <label>A：行動の前（先行事象）<textarea id="abcA" placeholder="何が起きていたか、予定変更、待ち時間、周囲の刺激など"></textarea></label>
+  <label>B：行動<textarea id="abcB" placeholder="『暴れた』ではなく、見たままを具体的に"></textarea></label>
+  <label>C：行動の後<textarea id="abcC" placeholder="周囲の対応、その後どうなったか"></textarea></label>
+  <label>気づき・仮説<textarea id="abcHyp" placeholder="背景として考えられること。断定せず仮説として記録"></textarea></label>
+  <button class="primary" onclick="saveABC()">保存</button>
+ </div>
+ <div class="card"><h3>最近の記録</h3><div id="abcRecords"></div></div>
+</section>
+
+<section id="check" class="page">
+ <button class="back" onclick="show('home')">← 戻る</button>
+ <div class="section-title"><h2>支援チェック</h2><small>支援前・振り返り</small></div>
+ <div class="card" id="checklist"></div>
+ <button class="secondary" onclick="resetChecks()">リセット</button>
+</section>
+
+<section id="learn" class="page">
+ <button class="back" onclick="show('home')">← 戻る</button>
+ <div class="section-title"><h2>基礎学習</h2><small>短く確認</small></div>
+ <div class="card"><span class="tag">基本</span><h3>行動だけで判断しない</h3><p>行動は目に見える部分です。その背景に、障害特性、分かりにくさ、感覚刺激、体調、コミュニケーションの難しさ、予測できない変化などが関係している可能性があります。</p></div>
+ <div class="card"><span class="tag">構造化</span><h3>「何を・どこで・どのくらい・いつ終わる・次は何」を分かりやすく</h3><p>活動の内容や数、順序が変わっても「どう進めればよいか」が理解できる仕組みを整えます。</p></div>
+ <div class="card"><span class="tag">コミュニケーション</span><h3>本人が伝える手段も整える</h3><p>要求・拒否・休憩・手伝ってほしいことなどを、言葉、写真、絵、文字、ジェスチャー等、本人に合う方法で伝えられるようにします。</p></div>
+ <div class="card"><span class="tag">記録と評価</span><h3>支援は作って終わりではない</h3><p>具体的な記録を残し、チームで共有し、支援の結果を評価して必要に応じて見直します。</p></div>
+</section>
+</main>
+
+<div class="bottom"><nav>
+ <button data-page="home" class="active" onclick="show('home')"><b>🏠</b>ホーム</button>
+ <button data-page="situations" onclick="show('situations')"><b>🧭</b>対応</button>
+ <button data-page="profiles" onclick="show('profiles')"><b>👤</b>利用者</button>
+ <button data-page="procedure" onclick="show('procedure')"><b>📋</b>手順書</button>
+ <button data-page="abc" onclick="show('abc')"><b>📝</b>記録</button>
+</nav></div>
+
+
+<div id="installGuide" class="install-guide" onclick="if(event.target===this)hideInstallGuide()">
+  <div class="install-card">
+    <div class="grab"></div>
+    <span class="tag">iPhoneにインストール</span>
+    <h2>ホーム画面に追加</h2>
+    <div id="installStatus" class="install-status">Safariで開いてください。</div>
+    <ol class="install-steps">
+      <li>このアプリの公開URLを<strong>Safari</strong>で開きます。</li>
+      <li>Safariの<strong>共有</strong>をタップします。</li>
+      <li><strong>「ホーム画面に追加」</strong>を選びます。</li>
+      <li><strong>「Webアプリとして開く」</strong>をオンにして「追加」をタップします。</li>
+    </ol>
+    <p>追加後はホーム画面の「支援ナビ」アイコンから起動できます。初回読み込み後は、主要画面をオフラインでも開けるようにキャッシュします。</p>
+    <button class="primary" onclick="hideInstallGuide()">閉じる</button>
+  </div>
+</div>
+
+<div id="sheet" class="sheet" onclick="if(event.target===this)closeSheet()"><div class="sheet-inner"><div class="grab"></div><div id="sheetContent"></div></div></div>
+
+<script>
+const scenarios=[
+{cat:"こだわり",title:"こだわりが強く、活動を切り替えにくい",bg:["本人にとって安心できる手順・順序・状態になっている","終わりや変更が分かりにくい","次の活動に何が起こるか予測しにくい","感覚的な好みや不快さが関係している可能性"],safety:"無理に取り上げたり、急にやめさせたりせず、安全に関わる場合は周囲の危険物や人との距離を調整します。",calm:"言葉を増やしすぎず、いつ終わるか・次に何をするかを見える形で示します。可能なら本人が理解しやすい『終わり方』を使います。",after:"何にこだわっていたのか、前後の状況、変更点、本人が落ち着いたきっかけを記録します。",prevent:["活動の開始と終了を分かりやすくする","変更がある場合は早めに視覚的に知らせる","『終わったら次は○○』を一貫した方法で示す","本人にとって必要なこだわりと、生活上調整が必要な部分を分けて考える"],avoid:["突然取り上げる","『ダメ』『早くして』だけで終える","本人のこだわりをすべて問題行動として扱う"]},
+{cat:"感覚過敏",title:"音・光・におい・触覚などで苦痛が強い",bg:["特定の音や声、人混み、照明、におい、衣服の触感などが強い刺激になっている","本人が苦痛を言葉で伝えにくい","刺激が重なって負担が蓄積している可能性"],safety:"本人が刺激から離れられるようにし、飛び出し等の危険がある場合は安全な移動経路を確保します。",calm:"刺激を減らせる場所へ移る、声かけを減らす、照明・音・人の出入りを調整するなど、まず環境側を変えます。",after:"何の刺激があったか、強さ・時間帯・場所・他の刺激との重なりを記録します。",prevent:["静かな場所や休憩手段を事前に用意する","刺激の多い時間帯や場所を把握する","本人が『休憩』『離れたい』を伝える方法を用意する","イヤーマフ等は本人の状態や専門職の助言も踏まえ、過度に一律使用しない"],avoid:["『気にしすぎ』と決めつける","刺激のある場所に無理に留める","嫌がる刺激へ慣れさせようとして急に強く曝す"]},
+{cat:"パニック",title:"混乱が強まり、大声・泣く・動き回る",bg:["予定変更や待ち時間など、予測できない状況","要求や拒否を伝えにくい","刺激が多い","体調不良・疲労・空腹等が重なっている可能性"],safety:"本人と周囲の安全を最優先し、人や物との距離、出口や危険物など環境を確認します。",calm:"一斉に声をかけず、短く具体的に伝えます。刺激を減らし、本人が普段落ち着きやすい場所・方法があれば活用します。",after:"落ち着いてから、何が起点だったか、直前のサイン、どの支援で変化したかを振り返ります。",prevent:["予定変更を早めに知らせる","待ち時間を見える化する","休憩や拒否を伝える方法を整える","小さな不安サインを支援者間で共有する"],avoid:["大声で制止する","複数人で囲む","落ち着く前に詳しい説明や説得を続ける"]},
+{cat:"自傷",title:"自分を叩く・噛む・頭を打つなど",bg:["苦痛・不快・要求・拒否などを伝えにくい","予測できない変化や終わりの分かりにくさ","感覚刺激や体調不良・痛み等が関係する可能性","行動の結果として状況が変化する経験が積み重なっている可能性"],safety:"まずけがの危険を確認し、周囲の硬い物・角などを避けます。重大なけが、意識の変化、強い痛み等がある場合は所属先の医療・緊急手順に従います。",calm:"声かけや人の数を必要最小限にし、本人が理解しやすい方法で『休憩』『終わり』『次』を示します。",after:"自傷の形、回数、強さ、直前の出来事、対応、その後の変化を具体的に記録します。",prevent:["要求・拒否・休憩の伝達手段を整える","活動の終わりと次を分かりやすくする","体調や痛みの可能性も除外せず検討する","記録から起こりやすい条件と有効な支援をチームで確認する"],avoid:["本人を責める","原因を一つに決めつける","必要以上の身体拘束や威圧的対応に頼る"]},
+{cat:"他害",title:"叩く・蹴る・噛む・物を投げるなど",bg:["距離が近い、人や刺激が多い","要求・拒否・中止を伝えにくい","急な変更、待ち時間、活動の難しさ","体調・痛み・疲労等が関係する可能性"],safety:"本人と周囲双方の安全を優先し、人を離す、危険物を避けるなど環境調整を行います。所属先の緊急対応手順がある場合はそれに従います。",calm:"複数人が一斉に話しかけず、必要な言葉を短くします。本人が移動できる安全な場所や休憩の選択肢を示します。",after:"対象・行動の形・直前の出来事・距離・声かけ・環境・その後を具体的に記録します。",prevent:["苦手な距離や混雑を把握する","拒否や休憩を伝える手段を作る","予定や課題量を見える化する","支援者間で初期サインと対応を統一する"],avoid:["仕返し・威圧","取り囲む","『怒りっぽい性格』だけで説明する"]},
+{cat:"大声",title:"大声・叫び・泣きが長く続く",bg:["終わりや次の予定が分からない","要求や不快を伝える代わりになっている","刺激が強い","待ち時間や課題の難しさ"],safety:"周囲との接触や飛び出し等の危険がないか確認します。",calm:"『静かに』だけでなく、何をすればよいか、いつ終わるかを具体的に示します。",after:"いつ・どこで・何の直後に始まり、どう対応してどう変化したか記録します。",prevent:["待ち時間を短く・見える化する","要求の伝え方を練習する","次の予定を具体的に示す"],avoid:["さらに大声で注意する","理由を本人の気分だけで片付ける"]},
+{cat:"予定変更",title:"予定変更で混乱しやすい",bg:["予測していた流れが崩れる","代替案が分からない","変更を言葉だけで理解しにくい"],safety:"変更時に飛び出し等がある場合は移動経路と周囲の安全を先に確認します。",calm:"変更前と変更後を、写真・文字・スケジュール等で比較して示します。",after:"変更の伝え方・タイミング・代替案の理解度を確認します。",prevent:["可能な限り早く知らせる","『中止』だけでなく『代わりに何をするか』を示す","変更カード等、いつも同じ伝え方を作る"],avoid:["直前に突然言葉だけで変更する","『仕方ない』で終える"]},
+{cat:"待つ",title:"待ち時間で落ち着かなくなる",bg:["どのくらい待つか分からない","待っている間に何をするか分からない","人や音など刺激が多い"],safety:"移動や飛び出しにつながる場合は待つ場所の安全を見直します。",calm:"時間・回数・順番など、本人に分かる方法で待ち時間を示します。",after:"実際の待ち時間と行動の変化を記録します。",prevent:["タイマーや順番カードを使う","待つ場所を固定する","長い待ち時間を減らす","待っている間の活動を用意する"],avoid:["『もう少し』を繰り返す","理由なく待たせ続ける"]}
+];
+
+function esc(s){return (s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function show(id){
+ document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));
+ window.scrollTo({top:0,behavior:'smooth'});
+ if(id==='profiles') renderProfiles();
+ if(id==='procedure'){fillProfileSelects();loadProcedure()}
+ if(id==='abc'){fillProfileSelects();renderABC()}
+}
+function isStandalone(){
+ return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+function showInstall(){
+ const status = document.getElementById('installStatus');
+ const guide = document.getElementById('installGuide');
+ if(isStandalone()){
+   status.textContent = 'この端末では、すでにWebアプリとして起動しています。';
+ }else{
+   const ua=navigator.userAgent||'';
+   const isiOS=/iPhone|iPad|iPod/i.test(ua);
+   const isSafari=isiOS && /Safari/i.test(ua) && !/CriOS|FxiOS|EdgiOS/i.test(ua);
+   status.textContent = isiOS
+     ? (isSafari ? 'このままSafariの共有メニューから追加できます。' : 'Safariでこのページを開き直してから追加するのがおすすめです。')
+     : 'iPhoneのSafariで公開URLを開いて追加してください。';
+ }
+ guide.classList.add('show');
+}
+function hideInstallGuide(){document.getElementById('installGuide').classList.remove('show')}
+const cats=["すべて",...new Set(scenarios.map(x=>x.cat))];
+scenarioFilters.innerHTML=cats.map((c,i)=>`<button class="${i===0?'active':''}" onclick="filterScenario('${c}',this)">${c}</button>`).join('');
+function filterScenario(cat,btn){document.querySelectorAll('#scenarioFilters button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');renderScenarios(cat)}
+function renderScenarios(cat="すべて"){
+ const arr=cat==="すべて"?scenarios:scenarios.filter(x=>x.cat===cat);
+ scenarioList.innerHTML=arr.map((s,i)=>`<div class="card scenario" onclick="openScenario(${scenarios.indexOf(s)})"><span class="tag">${s.cat}</span><h3>${s.title}<span class="arrow">›</span></h3><p>${s.bg[0]} など、背景を整理して考えます。</p></div>`).join('');
+}
+function openScenario(i){
+ const s=scenarios[i];
+ sheetContent.innerHTML=`<span class="tag">${s.cat}</span><h2>${s.title}</h2>
+ <div class="card"><h3>考えられる背景</h3><ul>${s.bg.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+ <div class="step"><div class="num">1</div><div><b>まず安全確認</b><p>${s.safety}</p></div></div>
+ <div class="step"><div class="num">2</div><div><b>落ち着くまで</b><p>${s.calm}</p></div></div>
+ <div class="step"><div class="num">3</div><div><b>落ち着いた後</b><p>${s.after}</p></div></div>
+ <div class="card good"><h3>予防的な支援</h3><ul>${s.prevent.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+ <div class="card danger"><h3>避けたい対応</h3><ul>${s.avoid.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+ <button class="secondary" onclick="closeSheet()">閉じる</button>`;
+ sheet.classList.add('show');
+}
+function closeSheet(){sheet.classList.remove('show')}
+
+function getProfiles(){return JSON.parse(localStorage.getItem('shien_profiles')||'[]')}
+function setProfiles(v){localStorage.setItem('shien_profiles',JSON.stringify(v))}
+function renderProfiles(){
+ const arr=getProfiles();
+ profileList.innerHTML=arr.length?arr.map((p,i)=>`<div class="card profile-card" onclick="openProfile(${i})"><div class="avatar">👤</div><div class="grow"><b>${esc(p.name||'名称未設定')}</b><br><small>${esc(p.comm||'伝わりやすい方法を未登録')}</small></div><span>›</span></div>`).join(''):`<div class="card empty">まだ利用者が登録されていません。<br>右上の「＋追加」から作成できます。</div>`;
+}
+function openProfile(i=null){
+ const p=i===null?{}:getProfiles()[i];
+ sheetContent.innerHTML=`<h2>${i===null?'利用者を追加':'利用者情報を編集'}</h2>
+ <label>呼び名・識別名<input id="pfName" value="${esc(p.name||'')}"></label>
+ <label>理解しやすい伝え方<textarea id="pfComm">${esc(p.comm||'')}</textarea></label>
+ <label>苦手なこと・刺激<textarea id="pfHard">${esc(p.hard||'')}</textarea></label>
+ <label>好きなこと・落ち着きやすいこと<textarea id="pfLike">${esc(p.like||'')}</textarea></label>
+ <label>不安・混乱の初期サイン<textarea id="pfSigns">${esc(p.signs||'')}</textarea></label>
+ <label>有効だった支援<textarea id="pfSupport">${esc(p.support||'')}</textarea></label>
+ <label>避けた方がよい対応<textarea id="pfAvoid">${esc(p.avoid||'')}</textarea></label>
+ <button class="primary" onclick="saveProfile(${i===null?'null':i})">保存</button>
+ ${i!==null?`<button class="dangerbtn" onclick="deleteProfile(${i})">この利用者を削除</button>`:''}
+ <p class="empty">個人情報は必要最小限にしてください。この試作版では端末のブラウザ内に保存されます。</p>`;
+ sheet.classList.add('show');
+}
+function saveProfile(i){
+ const p={name:pfName.value.trim(),comm:pfComm.value.trim(),hard:pfHard.value.trim(),like:pfLike.value.trim(),signs:pfSigns.value.trim(),support:pfSupport.value.trim(),avoid:pfAvoid.value.trim()};
+ if(!p.name){alert('呼び名・識別名を入力してください');return}
+ const arr=getProfiles(); if(i===null)arr.push(p);else arr[i]=p;setProfiles(arr);closeSheet();renderProfiles();fillProfileSelects();
+}
+function deleteProfile(i){
+ if(!confirm('この利用者情報を削除しますか？'))return;
+ const arr=getProfiles();arr.splice(i,1);setProfiles(arr);closeSheet();renderProfiles();fillProfileSelects();
+}
+function fillProfileSelects(){
+ const arr=getProfiles(),opts=`<option value="">選択してください</option>`+arr.map((p,i)=>`<option value="${i}">${esc(p.name)}</option>`).join('');
+ if(document.getElementById('procProfile')) procProfile.innerHTML=opts;
+ if(document.getElementById('abcProfile')) abcProfile.innerHTML=opts;
+}
+function procKey(){return 'procedure_'+procProfile.value}
+function getProc(){
+ if(procProfile.value==="")return {};
+ return JSON.parse(localStorage.getItem(procKey())||'{}');
+}
+function loadProcedure(){
+ const p=getProc();
+ procScene.value=p.scene||'';procTell.value=p.tell||'';procEnv.value=p.env||'';procSteps.value=p.steps||'';procSigns.value=p.signs||'';procCrisis.value=p.crisis||'';procAvoid.value=p.avoid||'';procRecord.value=p.record||'';
+ renderProcedurePreview();
+}
+function saveProcedure(){
+ if(procProfile.value===""){alert('利用者を選択してください');return}
+ const p={scene:procScene.value,tell:procTell.value,env:procEnv.value,steps:procSteps.value,signs:procSigns.value,crisis:procCrisis.value,avoid:procAvoid.value,record:procRecord.value,updated:new Date().toISOString()};
+ localStorage.setItem(procKey(),JSON.stringify(p));renderProcedurePreview();alert('支援手順書を保存しました');
+}
+function renderProcedurePreview(){
+ if(procProfile.value===""){procedurePreview.textContent="利用者を選択して手順書を作成してください。";return}
+ const prof=getProfiles()[Number(procProfile.value)]||{},p={scene:procScene.value,tell:procTell.value,env:procEnv.value,steps:procSteps.value,signs:procSigns.value,crisis:procCrisis.value,avoid:procAvoid.value,record:procRecord.value};
+ procedurePreview.textContent=
+`【支援手順書】
+利用者：${prof.name||""}
+
+■ 支援する場面
+${p.scene||"未入力"}
+
+■ 本人に伝える内容
+${p.tell||"未入力"}
+
+■ 環境の設定
+${p.env||"未入力"}
+
+■ 具体的な支援手順
+${p.steps||"未入力"}
+
+■ 不安・混乱のサイン
+${p.signs||prof.signs||"未入力"}
+
+■ 混乱が強まった時の対応
+${p.crisis||"未入力"}
+
+■ 避ける対応
+${p.avoid||prof.avoid||"未入力"}
+
+■ 記録するポイント
+${p.record||"未入力"}
+
+【本人理解メモ】
+伝わりやすい方法：${prof.comm||"未入力"}
+苦手なこと・刺激：${prof.hard||"未入力"}
+好き・落ち着きやすいこと：${prof.like||"未入力"}
+有効だった支援：${prof.support||"未入力"}`;
+}
+function getABC(){return JSON.parse(localStorage.getItem('abc_records_v2')||'[]')}
+function saveABC(){
+ const rec={profile:abcProfile.value,date:abcDate.value,a:abcA.value.trim(),b:abcB.value.trim(),c:abcC.value.trim(),hyp:abcHyp.value.trim()};
+ if(!rec.a&&!rec.b&&!rec.c){alert('記録内容を入力してください');return}
+ const arr=getABC();arr.unshift(rec);localStorage.setItem('abc_records_v2',JSON.stringify(arr.slice(0,100)));
+ abcA.value=abcB.value=abcC.value=abcHyp.value='';renderABC();
+}
+function renderABC(){
+ const arr=getABC(),profiles=getProfiles();
+ abcRecords.innerHTML=arr.length?arr.slice(0,20).map((r,i)=>`<div class="record"><small>${r.date?new Date(r.date).toLocaleString('ja-JP'):'日時未入力'} ・ ${r.profile!==''&&profiles[Number(r.profile)]?esc(profiles[Number(r.profile)].name):'利用者未選択'}</small><p><b>A</b> ${esc(r.a)}<br><b>B</b> ${esc(r.b)}<br><b>C</b> ${esc(r.c)}${r.hyp?`<br><b>仮説</b> ${esc(r.hyp)}`:''}</p><button class="secondary" onclick="deleteABC(${i})">削除</button></div>`).join(''):`<div class="empty">まだ記録はありません。</div>`;
+}
+function deleteABC(i){let arr=getABC();arr.splice(i,1);localStorage.setItem('abc_records_v2',JSON.stringify(arr));renderABC()}
+const checks=["本人に『何をするか』が分かる","どこでするかが分かる","どのくらいするかが分かる","いつ終わるかが分かる","終わった後の予定が分かる","指示が短く具体的になっている","写真・絵・文字・実物など見える情報を必要に応じて使っている","本人が要求・拒否・休憩を伝える方法がある","感覚刺激・人・場所・時間など環境面を確認した","体調・疲労・痛みなどの可能性も除外せず考えた","初期サインと対応をチームで共有している","行動の前・行動・後を具体的に記録できている"];
+checklist.innerHTML=checks.map((x,i)=>`<label class="check"><input type="checkbox" id="ck${i}"><span>${x}</span></label>`).join('');
+function resetChecks(){checks.forEach((_,i)=>document.getElementById('ck'+i).checked=false)}
+renderScenarios();renderProfiles();fillProfileSelects();
+abcDate.value=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16);
+if('serviceWorker' in navigator){
+ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>{}));
+}
+window.addEventListener('load',()=>{
+ if(!isStandalone() && !localStorage.getItem('install_hint_seen')){
+   setTimeout(()=>{ showInstall(); localStorage.setItem('install_hint_seen','1'); },900);
+ }
+});
+</script>
+</body></html>

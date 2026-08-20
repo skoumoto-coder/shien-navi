@@ -1,0 +1,38 @@
+{
+  "id": "./",
+  "name": "強度行動障害 支援ナビ",
+  "short_name": "支援ナビ",
+  "description": "強度行動障害の学習、場面別対応、ABC記録、利用者別支援手順書をまとめた支援補助アプリ",
+  "lang": "ja",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f7f8fb",
+  "theme_color": "#f7f8fb",
+  "categories": [
+    "education",
+    "productivity",
+    "medical"
+  ],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
