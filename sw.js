@@ -1,4 +1,4 @@
-const CACHE = 'shien-navi-v6';
+const CACHE = 'shien-navi-v7';
 const CORE = [
   './',
   './index.html',
