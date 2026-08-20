@@ -74,10 +74,18 @@ textarea{min-height:92px;resize:vertical}
 .install-steps li:before{counter-increment:step;content:counter(step);position:absolute;left:0;top:9px;width:28px;height:28px;border-radius:50%;background:var(--accent2);color:var(--accent);display:grid;place-items:center;font-weight:800}
 .install-status{font-size:12px;padding:8px 10px;border-radius:12px;background:#f3f4f6;color:var(--muted);margin:10px 0}
 
+
+.progressbar{height:10px;background:#edf0f5;border-radius:999px;overflow:hidden;margin:10px 0}
+.progressbar span{display:block;height:100%;background:var(--accent);border-radius:999px}
+.answer-btn{width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:14px;padding:13px;margin:8px 0}
+.answer-btn.correct{background:var(--good);border-color:#bbf7d0}
+.answer-btn.wrong{background:var(--danger);border-color:#fecaca}
+.answer-explain{margin-top:12px;padding:12px;border-radius:14px;background:#f8fafc;line-height:1.7;font-size:14px}
+.scorebig{font-size:38px;font-weight:800;letter-spacing:-1px}
 </style>
 </head>
 <body>
-<header><div class="head"><div class="brand"><b>強度行動障害 支援ナビ</b><span>学習・記録・支援手順書</span></div><button class="pill" onclick="showInstall()">＋ ホーム画面</button></div></header>
+<header><div class="head"><div class="brand"><b>強度行動障害 支援ナビ</b><span>学習・記録・支援手順書　<span class="tag">学習テスト版</span></span></div><button class="pill" onclick="showInstall()">＋ ホーム画面</button></div></header>
 
 <main>
 <section id="home" class="page active">
@@ -88,7 +96,8 @@ textarea{min-height:92px;resize:vertical}
   <button class="tile" onclick="show('procedure')"><span class="ico">📋</span><b>支援手順書</b><span>本人別の手順書を作成・保存・印刷</span></button>
   <button class="tile" onclick="show('abc')"><span class="ico">📝</span><b>ABC記録</b><span>前・行動・後を具体的に記録</span></button>
   <button class="tile" onclick="show('check')"><span class="ico">✅</span><b>支援チェック</b><span>分かりやすさ・見通し・伝え方を確認</span></button>
-  <button class="tile" onclick="show('learn')"><span class="ico">📘</span><b>基礎学習</b><span>構造化・コミュニケーション・記録と評価</span></button>
+  <button class="tile" onclick="show('course')"><span class="ico">🎓</span><b>学習コース</b><span>学ぶ → テスト → 間違い復習 → 手順書</span></button>
+<button class="tile" onclick="show('learn')"><span class="ico">📘</span><b>基礎学習</b><span>構造化・コミュニケーション・記録と評価</span></button>
  </div>
  <div class="card notice"><h3>大切な注意</h3><p>このアプリは学習・支援補助用です。自傷・他害など切迫した危険がある場面では、まず本人と周囲の安全を確保し、所属先の緊急手順・管理者・医療専門職等の判断を優先してください。</p></div>
 </section>
@@ -146,6 +155,42 @@ textarea{min-height:92px;resize:vertical}
  <div class="section-title"><h2>支援チェック</h2><small>支援前・振り返り</small></div>
  <div class="card" id="checklist"></div>
  <button class="secondary" onclick="resetChecks()">リセット</button>
+</section>
+
+
+<section id="course" class="page">
+ <button class="back" onclick="show('home')">← 戻る</button>
+ <div class="section-title"><h2>🎓 学習コース</h2><small>4ステップで完結</small></div>
+ <div class="card"><span class="tag">STEP 1</span><h3>📘 学ぶ</h3><p>強度行動障害の基本、構造化、コミュニケーション、感覚過敏、こだわり、パニック、自傷・他害、ABC記録を短く学びます。</p><button class="primary" onclick="show('courseLearn')">学習をはじめる</button></div>
+ <div class="card"><span class="tag">STEP 2</span><h3>📝 テストする</h3><p>○×・4択・事例問題から10問をランダム出題します。回答後すぐに解説を確認できます。</p><button class="primary" onclick="startTest()">テストをはじめる</button></div>
+ <div class="card"><span class="tag">STEP 3</span><h3>🔁 間違えた部分を復習する</h3><p>前回テストで間違えた問題だけをまとめて復習できます。</p><button class="secondary" onclick="openWrongReview()">間違い復習を見る</button></div>
+ <div class="card"><span class="tag">STEP 4</span><h3>📋 現場の支援手順書を見る</h3><p>学んだ内容を、利用者ごとの具体的な支援手順に落とし込みます。</p><button class="secondary" onclick="show('procedure')">支援手順書へ</button></div>
+ <div class="card good"><h3>学習状況</h3><div id="courseProgress">まだテスト履歴はありません。</div></div>
+</section>
+
+<section id="courseLearn" class="page">
+ <button class="back" onclick="show('course')">← 学習コース</button>
+ <div class="section-title"><h2>📘 学ぶ</h2><small>要点を短く確認</small></div>
+ <div id="courseLearnContent"></div>
+ <div class="card good"><h3>学習できたらテストへ</h3><button class="primary" onclick="startTest()">10問テストをはじめる</button></div>
+</section>
+
+<section id="test" class="page">
+ <button class="back" onclick="show('course')">← 学習コース</button>
+ <div class="section-title"><h2>📝 学習テスト</h2><small id="testCounter">1 / 10</small></div>
+ <div class="card" id="testBox"></div>
+</section>
+
+<section id="testResult" class="page">
+ <button class="back" onclick="show('course')">← 学習コース</button>
+ <div class="section-title"><h2>📊 テスト結果</h2><small>復習につなげる</small></div>
+ <div class="card" id="testResultBox"></div>
+</section>
+
+<section id="wrongReview" class="page">
+ <button class="back" onclick="show('course')">← 学習コース</button>
+ <div class="section-title"><h2>🔁 間違い復習</h2><small>前回の苦手を確認</small></div>
+ <div id="wrongReviewList"></div>
 </section>
 
 <section id="learn" class="page">
@@ -350,7 +395,52 @@ function deleteABC(i){let arr=getABC();arr.splice(i,1);localStorage.setItem('abc
 const checks=["本人に『何をするか』が分かる","どこでするかが分かる","どのくらいするかが分かる","いつ終わるかが分かる","終わった後の予定が分かる","指示が短く具体的になっている","写真・絵・文字・実物など見える情報を必要に応じて使っている","本人が要求・拒否・休憩を伝える方法がある","感覚刺激・人・場所・時間など環境面を確認した","体調・疲労・痛みなどの可能性も除外せず考えた","初期サインと対応をチームで共有している","行動の前・行動・後を具体的に記録できている"];
 checklist.innerHTML=checks.map((x,i)=>`<label class="check"><input type="checkbox" id="ck${i}"><span>${x}</span></label>`).join('');
 function resetChecks(){checks.forEach((_,i)=>document.getElementById('ck'+i).checked=false)}
-renderScenarios();renderProfiles();fillProfileSelects();
+
+const learningTopics=[
+{id:"basic",title:"強度行動障害の基本",icon:"🧠",body:"行動だけを問題として見るのではなく、障害特性・環境・コミュニケーション・見通し・体調など、その背景を整理して考えます。支援の目的は、行動を止めることだけではなく、本人が安心して生活しやすい環境をつくることです。"},
+{id:"structure",title:"構造化",icon:"🧩",body:"『何をする・どこでする・どのくらいする・いつ終わる・終わったら次は何』を本人に分かる形で示します。内容や順番が変わっても、進め方が分かる仕組みを整えます。"},
+{id:"communication",title:"コミュニケーション",icon:"💬",body:"支援者が分かりやすく伝えるだけでなく、本人が『休みたい』『嫌です』『手伝って』『終わりたい』を伝えられる方法も整えます。写真・絵・文字・実物・ジェスチャーなどを使います。"},
+{id:"sensory",title:"感覚過敏",icon:"🎧",body:"音・光・におい・触覚などの刺激が強い負担になる場合があります。まず刺激を減らす、離れられる場所を作る、休憩を伝えられる方法を整えることを検討します。"},
+{id:"routine",title:"こだわり・予定変更",icon:"🔁",body:"こだわりは本人にとって安心や予測可能性につながっていることがあります。突然取り上げるのではなく、終わり方や変更後の予定を見える形で示します。"},
+{id:"panic",title:"パニック",icon:"🌪️",body:"混乱が強まった時は、安全確保を優先し、刺激や声かけを減らします。落ち着く前に説明や説得を増やさず、本人が普段落ち着きやすい方法を活用します。"},
+{id:"harm",title:"自傷・他害",icon:"🛡️",body:"まず本人と周囲の安全を確保します。行動の形・強さ・直前の状況・対応・その後を具体的に記録し、背景を一つに決めつけず、体調や痛みの可能性も含めて検討します。"},
+{id:"abc",title:"ABC記録",icon:"📝",body:"A＝行動の前、B＝行動、C＝行動の後を具体的に記録します。『暴れた』ではなく、見たままの行動を書きます。"},
+{id:"team",title:"チーム支援",icon:"🤝",body:"職員ごとの対応差を減らし、支援手順を共有します。支援は一度決めて終わりではなく、記録→評価→見直しを繰り返します。"}
+];
+courseLearnContent.innerHTML=learningTopics.map(t=>`<div class="card"><span class="tag">${t.icon} ${t.title}</span><p>${t.body}</p></div>`).join('');
+
+const quizBank=[
+{topic:"basic",q:"強度行動障害への支援では、行動を止めることだけを目的にする。",opts:["○ はい","× いいえ"],correct:1,ex:"行動の背景や本人の困りごとを整理し、安心して生活できる環境や伝え方を整えることが重要です。"},
+{topic:"basic",q:"行動の背景として考える視点として最も適切なのは？",opts:["本人の性格だけ","障害特性・環境・体調・コミュニケーション","支援者の好み","行動の回数だけ"],correct:1,ex:"障害特性・環境・体調・伝達の難しさなどを広く見ます。"},
+{topic:"structure",q:"構造化で特に分かりやすくする内容として適切でないものは？",opts:["何をするか","どのくらいするか","いつ終わるか","支援者の気分"],correct:3,ex:"活動の内容・量・終了・次の予定などを本人に分かる形で示します。"},
+{topic:"communication",q:"『少し待って』より『5分待ちます』の方が具体的で分かりやすい。",opts:["○ はい","× いいえ"],correct:0,ex:"時間や回数などを具体的に示すと理解しやすくなります。"},
+{topic:"communication",q:"コミュニケーション支援として最も適切なのは？",opts:["本人が話せるまで待つ","言葉だけに統一する","本人に合う写真・文字・ジェスチャー等も使う","要求は受け付けない"],correct:2,ex:"本人が要求・拒否・休憩などを表現できる方法を整えます。"},
+{topic:"sensory",q:"感覚過敏が疑われる場面で、まず検討したいことは？",opts:["刺激をさらに強くして慣らす","刺激を減らせる環境を作る","我慢させる","本人の気にしすぎと考える"],correct:1,ex:"まず環境側を調整し、刺激から離れられる方法や休憩手段を整えます。"},
+{topic:"routine",q:"こだわりが見られたら、できるだけ早く全部やめさせる。",opts:["○ はい","× いいえ"],correct:1,ex:"こだわりには安心や予測可能性の役割がある場合があります。"},
+{topic:"routine",q:"予定変更を伝える方法として適切なのは？",opts:["直前に言葉だけで伝える","『中止』だけ伝える","変更前と変更後、代わりの予定を見える形で示す","何も知らせない"],correct:2,ex:"変更内容と代替案を視覚的に示すことで、見通しを持ちやすくします。"},
+{topic:"panic",q:"パニックが強まっている時の対応として適切なのは？",opts:["複数人で一斉に説明する","大声で注意する","刺激と声かけを必要最小限にする","長く説得する"],correct:2,ex:"まず安全を確認し、刺激を減らし、短く具体的な支援にします。"},
+{topic:"harm",q:"自傷や他害があった時は、まず原因を1つに決めることが重要である。",opts:["○ はい","× いいえ"],correct:1,ex:"環境・要求・刺激・体調・痛みなど複数の可能性を検討します。"},
+{topic:"harm",q:"自傷・他害がある場面で最優先することは？",opts:["記録を書く","本人と周囲の安全確保","説教する","原因を問い詰める"],correct:1,ex:"まず安全を確保し、その後で具体的な記録と振り返りを行います。"},
+{topic:"abc",q:"ABC記録のBに書く内容として適切なのは？",opts:["『機嫌が悪かった』","『暴れた』","『机を手で3回叩いた』","『わがままだった』"],correct:2,ex:"Bには見たままの具体的な行動を書きます。"},
+{topic:"abc",q:"ABC記録は、行動が起きた後だけ記録すればよい。",opts:["○ はい","× いいえ"],correct:1,ex:"行動前の状況、行動、その後の対応と変化をセットで記録します。"},
+{topic:"team",q:"支援がうまくいかない時の考え方として適切なのは？",opts:["本人の努力不足","支援者を交代するだけ","環境や支援方法も見直す","記録をやめる"],correct:2,ex:"支援方法・環境・伝え方を見直し、記録に基づいてチームで検討します。"},
+{topic:"team",q:"支援手順書は一度作れば、その後は変更しない方がよい。",opts:["○ はい","× いいえ"],correct:1,ex:"記録と評価をもとに、必要に応じて更新します。"},
+{topic:"panic",q:"事例：予定変更後に大声が続いている。まず支援者が行うこととして最も適切なのは？",opts:["『静かにして』と繰り返す","変更後の予定を見える形で示し、刺激を減らす","理由を長く説明する","その場から全員で囲む"],correct:1,ex:"変更後の見通しを示し、過剰な刺激や声かけを減らします。"},
+{topic:"sensory",q:"事例：人混みで耳を塞ぎ、動けなくなった。まず考える視点は？",opts:["反抗している","聴覚刺激など感覚面の負担","練習不足","甘えている"],correct:1,ex:"音や人の多さなど感覚刺激の負担を考えます。"},
+{topic:"routine",q:"事例：毎日同じ順番でないと活動できない。支援として適切なのは？",opts:["順番を毎日ランダムにする","急に全部変える","進め方が分かる仕組みを作り、変更は見える形で伝える","本人の希望を無視する"],correct:2,ex:"本人が理解しやすい仕組みを作り、変更は予測できるように伝えます。"}
+];
+
+let currentTest=[],testIndex=0,testScore=0,testAnswers=[],testLocked=false;
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+function startTest(){currentTest=shuffle(quizBank).slice(0,10);testIndex=0;testScore=0;testAnswers=[];testLocked=false;show('test');renderTestQuestion()}
+function renderTestQuestion(){const q=currentTest[testIndex],topic=learningTopics.find(t=>t.id===q.topic);testCounter.textContent=`${testIndex+1} / ${currentTest.length}`;testBox.innerHTML=`<span class="tag">${topic?topic.icon:"📝"} ${topic?topic.title:"テスト"}</span><div class="progressbar"><span style="width:${(testIndex/currentTest.length)*100}%"></span></div><h3>${q.q}</h3><div id="answers">${q.opts.map((o,i)=>`<button class="answer-btn" onclick="answerTest(${i},this)">${o}</button>`).join('')}</div><div id="testExplain"></div>`}
+function answerTest(choice,btn){if(testLocked)return;testLocked=true;const q=currentTest[testIndex],ok=choice===q.correct;if(ok)testScore++;testAnswers.push({q,choice,ok});document.querySelectorAll('.answer-btn').forEach((b,i)=>{b.disabled=true;if(i===q.correct)b.classList.add('correct');else if(i===choice&&!ok)b.classList.add('wrong')});testExplain.innerHTML=`<div class="answer-explain"><b>${ok?"✅ 正解":"❌ 不正解"}</b><br>${q.ex}</div><button class="primary" onclick="nextTestQuestion()">${testIndex===currentTest.length-1?"結果を見る":"次の問題"}</button>`}
+function nextTestQuestion(){testIndex++;testLocked=false;if(testIndex>=currentTest.length){finishTest();return}renderTestQuestion()}
+function finishTest(){const wrong=testAnswers.filter(x=>!x.ok),hist=JSON.parse(localStorage.getItem('learning_history')||'[]');hist.unshift({date:new Date().toISOString(),score:testScore,total:currentTest.length,wrong:wrong.map(x=>x.q)});localStorage.setItem('learning_history',JSON.stringify(hist.slice(0,20)));localStorage.setItem('last_wrong_questions',JSON.stringify(wrong.map(x=>x.q)));show('testResult');const pct=Math.round(testScore/currentTest.length*100);testResultBox.innerHTML=`<div class="scorebig">${testScore} / ${currentTest.length}</div><p>正答率 ${pct}%</p><div class="progressbar"><span style="width:${pct}%"></span></div><p>${wrong.length===0?"全問正解です。":"間違えた問題は "+wrong.length+" 問です。すぐに復習できます。"}</p>${wrong.length?'<button class="primary" onclick="openWrongReview()">間違えた問題を復習</button>':''}<button class="secondary" onclick="show('procedure')">現場の支援手順書を見る</button><button class="secondary" onclick="startTest()">もう一度テストする</button>`;updateCourseProgress()}
+function openWrongReview(){const wrong=JSON.parse(localStorage.getItem('last_wrong_questions')||'[]');show('wrongReview');if(!wrong.length){wrongReviewList.innerHTML='<div class="card empty">前回の間違いはありません。テストを受けると、ここに復習内容が表示されます。</div>';return}wrongReviewList.innerHTML=wrong.map((q,i)=>{const topic=learningTopics.find(t=>t.id===q.topic);return `<div class="card"><span class="tag">${topic?topic.icon:"🔁"} ${topic?topic.title:"復習"}</span><h3>${i+1}. ${q.q}</h3><p><b>正解：</b>${q.opts[q.correct]}</p><div class="answer-explain">${q.ex}</div></div>`}).join('')+`<div class="card good"><h3>復習できたら</h3><button class="primary" onclick="startTest()">もう一度テストする</button><button class="secondary" onclick="show('procedure')">支援手順書を見る</button></div>`}
+function updateCourseProgress(){const hist=JSON.parse(localStorage.getItem('learning_history')||'[]');if(!hist.length){courseProgress.innerHTML='まだテスト履歴はありません。';return}const last=hist[0],best=Math.max(...hist.map(h=>Math.round(h.score/h.total*100))),lp=Math.round(last.score/last.total*100);courseProgress.innerHTML=`<div><b>前回：</b>${last.score}/${last.total}（${lp}%）</div><div><b>最高：</b>${best}%</div><div><b>受験回数：</b>${hist.length}回</div>`}
+
+renderScenarios();renderProfiles();fillProfileSelects();updateCourseProgress();
 abcDate.value=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16);
 if('serviceWorker' in navigator){
  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>{}));

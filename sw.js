@@ -1,4 +1,4 @@
-const CACHE = 'shien-navi-v3';
+const CACHE = 'shien-navi-v5';
 const CORE = [
   './',
   './index.html',
@@ -25,7 +25,6 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
-
   event.respondWith(
     fetch(event.request)
       .then(response => {
